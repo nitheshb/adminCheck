@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import proxy from "http-proxy-middleware";
-import {db} from "../firebaseConfig";
+import {db, storage} from "../firebaseConfig";
 import { filter } from 'rxjs/operators';
 import { collectionData } from 'rxfire/firestore';
 import 'firebase/firestore';
@@ -52,6 +52,7 @@ class addTeam extends React.Component {
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
         // this.deletePlayer = this.deletePlayer.bind(this);
+        this.unSelectPlayer = this.unSelectPlayer.bind(this);
       }
      
       componentDidMount() {
@@ -76,29 +77,6 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
 });
  
 
-        // var allCities = citiesRef.get()
-        //   .then(snapshot => {
-        //     snapshot.forEach(doc => {
-        //       console.log(doc.id, '=>', doc.data());
-
-        //       const { player_name, points,category, team_name } = doc.data();
-
-        //       this.playersData.push({
-        //         key: doc.id,
-        //         player_name,
-        //         team_name,
-        //         category,
-        //         points
-        //       });
-
-        //       this.setState({
-        //         players: this.playersData
-        //       });
-        //     });
-        //   })
-        //   .catch(err => {
-        //     console.log('Error getting documents', err);
-        //   });
        }
        selectPlayer(key,e){
         // var index = this.selPlayerData.indexOf(e.target.value);
@@ -118,12 +96,22 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
        }
        selTeam(team,e){
          console.log("team is", team);
+         this.selPlayerData = team.team_members;
 
          this.setState({selctedPlayersList: team.team_members});
        }
        deletePlayer(key,e ){
         db.collection('Playit').doc(key.id).delete();
         console.log('delete is pressed1', key);
+    }
+    deleteTeam(key,e){
+      db.collection('TeamDirectory').doc(key.id).delete();
+      console.log("team is deleted", key.id);
+    }
+    unSelectPlayer(key){
+      var index =  findIndex(this.selPlayerData, (o) => { return isMatch(o, key) });
+      this.selPlayerData.splice(index, 1);
+      this.setState({selctedPlayersList: this.selPlayerData});
     }
     
       handleChange(event) {
@@ -153,11 +141,27 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
         e.preventDefault();
         const newTeam = {
           team_name: e.target[0].value,
-          team_img: e.target[1].value,
           team_members: this.state.selctedPlayersList,
         }
+        var file = e.target[1].files[0];
+        //   // create a storage ref
+        var storageRef = storage.ref('Team/'+ file.name);
+         //   // upload file
+         storageRef.put(file).then(function(snapshot){
+          console.log("uploadded blog or file  ", snapshot.metadata.fullPath);
 
-  db.collection('TeamDirectory').add(newTeam);
+         storage.ref(snapshot.metadata.fullPath).getDownloadURL().then(function(url){
+          newTeam.teamPic_url = url;
+          
+           console.log("ulr is ", newTeam);
+           db.collection('TeamDirectory').add(newTeam).then(data => {
+             console.log("data is ");
+             alert ("saved successfully");
+           })
+         })
+
+        })
+
 
  
       }
@@ -241,11 +245,9 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                               Team Image
                             </label>
                             <Input
-                              className="form-control-alternative"
-                              defaultValue=""
-                              id="input-ImageUrl"
-                              placeholder="https://"
-                              type="text"
+                            className="my-4"
+                              id="input-teamPic"
+                              type="file"
                             />
                           </FormGroup>
                         </Col>
@@ -288,7 +290,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                         >
                           <img
                             alt="..."
-                            src={require("assets/img/theme/bootstrap.jpg")}
+                            src={player.pic_url}
                           />
                         </a>
                         <Media>
@@ -300,9 +302,9 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                     </th>
                     <td>{player.category}</td>
                     <td>{player.team_name}</td>
-                    <td>{player.points}</td>
+                    <td>{player.base_price}</td>
 
-                    <td onClick={this.deletePlayer.bind(this, player)}><i className="ni ni-fat-remove"></i></td>
+                    <td onClick={this.unSelectPlayer.bind(this, player)}><i className="ni ni-fat-remove"></i></td>
                     </tr>
                         )}
 
@@ -369,7 +371,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                         >
                           <img
                             alt="..."
-                            src={require("assets/img/theme/bootstrap.jpg")}
+                            src={team.teamPic_url}
                           />
                         </a>
                         <Media>
@@ -380,6 +382,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                       </Media>
                     </th>
                     {/* <td>{team.team_members}</td> */}
+                    <td onClick={this.deleteTeam.bind(this, team)}><i className="ni ni-fat-remove"></i></td>
                     </tr>
                         )}
 
@@ -429,7 +432,6 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                     <th scope="col">S.no</th>
                       <th scope="col">Name</th>
                       <th scope="col">Category</th>
-                      <th scope="col">Team</th>
                       <th scope="col">value</th>
                     </tr>
                   </thead>
@@ -446,7 +448,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                         >
                           <img
                             alt="..."
-                            src={require("assets/img/theme/bootstrap.jpg")}
+                            src={player.pic_url}
                           />
                         </a>
                         <Media>
@@ -457,8 +459,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                       </Media>
                     </th>
                     <td>{player.category}</td>
-                    <td>{player.team_name}</td>
-                    <td>{player.points}</td>
+                    <td>{player.base_price}</td>
 
                     <td onClick={this.deletePlayer.bind(this, player)}><i className="ni ni-fat-remove"></i></td>
                     </tr>

@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import proxy from "http-proxy-middleware";
-import {db} from "../firebaseConfig";
+import {db, storage} from "../firebaseConfig";
 import { filter } from 'rxjs/operators';
 import { collectionData } from 'rxfire/firestore';
 import 'firebase/firestore';
@@ -23,6 +23,8 @@ import {
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.jsx";
+
+
 
 class addPlayer extends React.Component {
     constructor(props) {
@@ -87,9 +89,6 @@ collectionData(citiesRef, 'id').subscribe(todos => {
       }
     
       handleSubmit(e) {
-        
-          console.log(e.target[0].value, e.target[3].value);
-        alert('A name was submitted: ' + this.state.value);
         e.preventDefault();
         const newPlayer = {
           player_name: e.target[0].value,
@@ -98,6 +97,47 @@ collectionData(citiesRef, 'id').subscribe(todos => {
           base_price: e.target[3].value,
           
         }
+
+          console.log(e.target[0].value, e.target[3].value);
+          // get file
+          var file = e.target[5].files[0];
+          console.log("chheck for file data ", e.target[5].files[0]);
+
+        //   // create a storage ref
+          var storageRef = storage.ref('players/'+ file.name);
+
+        //   // upload file
+         storageRef.put(file).then(function(snapshot){
+           console.log("uploadded blog or file  ", snapshot.metadata.fullPath);
+
+          storage.ref(snapshot.metadata.fullPath).getDownloadURL().then(function(url){
+             newPlayer.pic_url = url;
+           
+            console.log("ulr is ", newPlayer);
+            db.collection('Playit').add(newPlayer).then(data => {
+              console.log("data is ");
+              alert ("saved successfully");
+            })
+          })
+
+         })
+         
+        //  task.on('state_changed', 
+         
+        //  function progress(snapshot){
+        //    console.log("snaphso ti s", snapshot);
+        //   //  var percentage = (snapshot.bytesTransferred/ snnapshhot.totalBytes) * 100;
+        //   //  uploader.value = percentage;
+        //  },
+        //  function error(err) {
+        //   console.log(err);
+        //  },
+        //  function complete() {
+        //     console.log(" file upload its completed ", snapshot);
+        //  }
+        //  );
+        
+        
 
         // axios.post('https://us-central1-teamplayers-f3b25.cloudfunctions.net/addItem',newPlayer)
         //   .then(res => console.log(res.data) );
@@ -158,7 +198,7 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="lucky"
+                              defaultValue=""
                               id="input-username"
                               placeholder="Username"
                               type="text"
@@ -167,7 +207,7 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                         </Col>
                       </Row>
                       <Row>
-                        <Col md="12">
+                        <Col md="6">
                           <FormGroup>
                             <label
                               className="form-control-label"
@@ -175,18 +215,17 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                             >
                               Category
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="Batsmen"
-                              id="input-category"
-                              placeholder="category"
-                              type="text"
-                            />
+                            
+
+<Input type="select" name="category" id="exampleSelect">
+            <option>Bat</option>
+            <option>Bow</option>
+            <option>All</option>
+            <option>WK</option>
+          </Input>
                           </FormGroup>
                         </Col>
-                      </Row>
-                      <Row>
-                        <Col md="12">
+                        <Col md="6">
                           <FormGroup>
                             <label
                               className="form-control-label"
@@ -196,7 +235,7 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                             </label>
                             <Input
                             className="form-control-alternative"
-                              defaultValue="India"
+                              defaultValue=""
                               id="input-teamName"
                               placeholder="TeamName"
                               type="text"
@@ -213,13 +252,13 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                             >
                               Points
                             </label>
-                            <Input type="select" name="select" id="exampleSelect">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </Input>
+
+                            <Input
+                              className="form-control-alternative"
+                              id="input-points"
+                              placeholder="Points"
+                              type="text"
+                            />
                             {/* <select className="form-control-selectBox">
   <option value="grapefruit">Grapefruit</option>
   <option value="lime">Lime</option>
@@ -247,7 +286,26 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                           </FormGroup>
                         </Col>
                       </Row>
+                       <Row>
+                      
+                        <Col md="12">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-playerPic"
+                            >
+                              Select Pic
+                            </label>
+                            <Input
+                            className="my-4"
+                              id="input-playerPic"
+                              type="file"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
                       <Row>
+                        
                           <Col>
                           <FormGroup>
                                      <div className="text-center">
@@ -319,7 +377,7 @@ collectionData(citiesRef, 'id').subscribe(todos => {
                         >
                           <img
                             alt="..."
-                            src={require("assets/img/theme/bootstrap.jpg")}
+                            src={player.pic_url}
                           />
                         </a>
                         <Media>

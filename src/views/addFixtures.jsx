@@ -43,7 +43,7 @@ import UserHeader from "components/Headers/UserHeader.jsx";
 class AddFixtures extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: '', players: [], searchText: '', selctedPlayersList:[], show: false,teams: [], selTeam:[]};
+        this.state = {value: '', players: [], searchText: '', selctedPlayersList:[], show: false,teams: [], selTeam:[], fixtures: []};
         this.playersData = [];
         this.selPlayerData =[];
     
@@ -57,6 +57,7 @@ class AddFixtures extends React.Component {
       componentDidMount() {
         var citiesRef = db.collection('Playit');
         var TeamDirectory = db.collection("TeamDirectory");
+        var TodayFixtures = db.collection("TodayFixtures");
 
         // players list fetcher from players Directory called Playit
 collectionData(citiesRef, 'id').subscribe(todos => {
@@ -72,6 +73,14 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
 
   this.setState({
             teams: team
+          });
+});
+
+collectionData(TodayFixtures, 'id').subscribe(fixtures => {
+  console.log("check with data", fixtures);
+
+  this.setState({
+            fixtures: fixtures
           });
 });
  
@@ -113,7 +122,9 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
         }else{
          console.log("player is selected", key, index);
          this.selPlayerData.push(key);
+         
          this.setState({selctedPlayersList: this.selPlayerData});
+         console.log("value after push is", this.state.selctedPlayersList);
       }
        }
        selTeam(team,e){
@@ -158,6 +169,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
           fee: e.target[3].value,
           prize: e.target[4].value,
           bid_type: e.target[5].value,
+          team_pics: [this.state.selctedPlayersList[0].teamPic_url, this.state.selctedPlayersList[1].teamPic_url],
           team: [...this.state.selctedPlayersList[0].team_members, ...this.state.selctedPlayersList[1].team_members],
         }
 
@@ -176,24 +188,6 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
     return (
       <>
         <UserHeader />
-        <Button variant="primary" onClick={this.handleShow}>
-          Launch demo modal
-        </Button>
-
-        <Modal show={this.state.show} onHide={this.handleClose}>
-          <ModalHeader closeButton>
-            {/* <Modal.Title>Modal heading</Modal.Title> */}
-          </ModalHeader>
-          <ModalBody>Woohoo, you're reading this text in a modal!</ModalBody>
-          <ModalFooter>
-            <Button variant="secondary" onClick={this.handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={this.handleClose}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </Modal>
         {/* Page content */}
         <Container className="mt--7" fluid>
           <Row>
@@ -359,7 +353,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                         >
                           <img
                             alt="..."
-                            src={require("assets/img/theme/bootstrap.jpg")}
+                            src={player.teamPic_url}
                           />
                         </a>
                         <Media>
@@ -386,7 +380,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                 </CardBody>
               </Card>
             </Col>
-            {/* third column */}
+            {/* 2nd column */}
             <Col className="order-xl-3" xl="4">
               <Card className="bg-secondary shadow">
                 <CardHeader className="bg-white border-0">
@@ -443,7 +437,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                         >
                           <img
                             alt="..."
-                            src={require("assets/img/theme/bootstrap.jpg")}
+                            src={player.teamPic_url}
                           />
                         </a>
                         <Media>
@@ -463,7 +457,91 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                   </Table>
                 </CardBody>
               </Card>
+
             </Col>
+
+            {/* end of second column */}
+            {/* start of first column */}
+             {/* third column */}
+             <Col className="order-xl-3" xl="4">
+              <Card className="bg-secondary shadow">
+                <CardHeader className="bg-white border-0">
+                  <Row className="align-items-center">
+                    <Col xs="8">
+                      <h3 className="mb-0">Total Team</h3>
+                    </Col>
+                    <Col className="text-right" xs="4">
+                      <Button
+                        color="primary"
+                        href="#pablo"
+                        onClick={e => e.preventDefault()}
+                        size="sm"
+                      >
+                        Settings
+                      </Button>
+                    </Col>
+                  </Row>
+                  
+                </CardHeader>
+                <CardBody>
+                <Row>
+                    <Col xs="8" className="mb-4 mt-4 text-right">
+                    <Input
+                              className="form-control-alternative"
+                              defaultValue=""
+                              id="input-search-text"
+                              placeholder="search player"
+                              type="text"
+                              onChange={this.updateSearch.bind(this)}
+                            />
+                    </Col>
+                  </Row>
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                    <th scope="col">S.no</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Category</th>
+                      <th scope="col">Team</th>
+                      <th scope="col">value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {this.state.selctedPlayersList.map((player,index) => 
+                        <tr key={index} onClick={this.selectPlayer.bind(this, player)}>
+                        <td>{index+ 1}</td>
+                    <th scope="row">
+                      <Media className="align-items-center">
+                        <a
+                          className="avatar rounded-circle mr-3"
+                          href="#pablo"
+                          onClick={e => e.preventDefault()}
+                        >
+                          <img
+                            alt="..."
+                            src={player.teamPic_url}
+                          />
+                        </a>
+                        <Media>
+                          <span className="mb-0 text-sm">
+                          {player.team_name}
+                          </span>
+                        </Media>
+                      </Media>
+                    </th>
+
+                    <td onClick={this.deletePlayer.bind(this, player)}><i className="ni ni-fat-remove"></i></td>
+                    </tr>
+                        )}
+
+                    <tr></tr>
+                    </tbody>
+                  </Table>
+                </CardBody>
+              </Card>
+              
+            </Col>
+            {/* end of third column */}
           </Row>
 
           {/* details players table */}
@@ -472,40 +550,97 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
             <div className="col">
               <Card className="shadow">
                 <CardHeader className="border-0">
-                  <h3 className="mb-0">Selected Team</h3>
+                  <h3 className="mb-0">Current Fixtures</h3>
                 </CardHeader>
                 <Table className="align-items-center table-flush" responsive>
                   <thead className="thead-light">
                     <tr>
+                      <th scope="col">s.no</th>
                       <th scope="col">Name</th>
-                      <th scope="col">Points</th>
+                      <th scope="col">prize</th>
+                      <th scope="col">fee</th>
+                      <th scope="col">joined/max</th>
                       <th scope="col">actions</th>
                       <th scope="col" />
                     </tr>
                   </thead>
                   <tbody>
-                  {this.state.selTeam.map((player,index) => 
+                  {this.state.fixtures.map((fixture,index) => 
+                  
                     <tr key = {index}>
+                      <td>{index+ 1}</td>
                       <th scope="row">
-                        <Media className="align-items-center">
+                      <Media className="align-items-center">  
+                      <div className="avatar-group">
                           <a
+                            className="avatar avatar-sm"
+                            href="#pablo"
+                            id="tooltip731399078"
+                            onClick={e => e.preventDefault()}
+                          >
+                            <img
+                              alt="..."
+                              className="rounded-circle"
+                              src={fixture.team_pics[0]}
+                            />
+                          </a>
+                          <UncontrolledTooltip
+                            delay={0}
+                            target="tooltip731399078"
+                          >
+                            Ryan Tompson
+                          </UncontrolledTooltip>
+                          <a
+                            className="avatar avatar-sm"
+                            href="#pablo"
+                            id="tooltip491083084"
+                            onClick={e => e.preventDefault()}
+                          >
+                            <img
+                              alt="..."
+                              className="rounded-circle"
+                              src={fixture.team_pics[1]}
+                            />
+                          </a>
+                          <UncontrolledTooltip
+                            delay={0}
+                            target="tooltip491083084"
+                          >
+                            Romina Hadid
+                          </UncontrolledTooltip>
+                         </div> 
+                       
+                          {/* <a
                             className="avatar rounded-circle mr-3"
                             href="#pablo"
                             onClick={e => e.preventDefault()}
                           >
                             <img
                               alt="..."
-                              src={require("assets/img/theme/react.jpg")}
+                              src={fixture.team_pics[0]}
                             />
-                          </a>
+                          </a> */}
                           <Media>
                             <span className="mb-0 text-sm">
-                              {player.player_name}
+                              {fixture.title}
                             </span>
                           </Media>
                         </Media>
                       </th>
-                      <th>{player.points}</th>
+                      <td>{fixture.prize}</td>
+                      <td>{fixture.fee}</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-2">60%</span>
+                          <div>
+                            <Progress
+                              max="100"
+                              value="60"
+                              barClassName="bg-warning"
+                            />
+                          </div>
+                        </div>
+                      </td>
                         <td className="text-right">
                         <UncontrolledDropdown>
                           <DropdownToggle
