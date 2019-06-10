@@ -2,6 +2,8 @@ import Index from "views/Index.jsx";
 import Profile from "views/examples/Profile.jsx";
 import AddPlayer from "views/addPlayer.jsx";
 import AddTeam from "views/addTeam.jsx";
+import matchSchedules from "views/showTodaySchedules.jsx";
+import myFitureMaker from "views/myFixtureMaker.jsx";
 import AddFixtures from "views/addFixtures.jsx";
 import Maps from "views/examples/Maps.jsx";
 import Register from "views/examples/Register.jsx";
@@ -15,6 +17,20 @@ var routes = [
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
     component: Index,
+    layout: "/admin"
+  },
+  {
+    path: "/today-matches",
+    name: "Today Match Schedules",
+    icon: "ni ni-calendar-grid-58 text-blue",
+    component: matchSchedules,
+    layout: "/admin"
+  },
+  {
+    path: "/myFixture-maker",
+    name: "Add New Fixture",
+    icon: "ni ni-trophy text-blue",
+    component: myFitureMaker,
     layout: "/admin"
   },
   {
