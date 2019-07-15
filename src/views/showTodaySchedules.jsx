@@ -38,7 +38,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 // core components
-import UserHeader from "components/Headers/UserHeader.jsx";
+import UserHeader from "../components/Headers/UserHeader.jsx";
 import { checkPropTypes } from "prop-types";
 
 class showTodaySchedule extends React.Component {
