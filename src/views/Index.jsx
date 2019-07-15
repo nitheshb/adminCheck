@@ -27,7 +27,7 @@ import {
   parseOptions,
   chartExample1,
   chartExample2
-} from "variables/charts.jsx";
+} from "../variables/charts.jsx";
 
 import Header from "../components/Headers/Header.jsx";
 
