@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/creativetimofficial/argon-dashboard-react.git"
   },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "keywords": [
     "react",
     "reactjs",
