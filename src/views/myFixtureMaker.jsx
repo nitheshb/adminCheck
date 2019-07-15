@@ -188,10 +188,10 @@ collectionData(TodayFixtures, 'id').subscribe(fixtures => {
         this.setState({ show: true });
       }
     
-      handleSubmit(e) {
+      async handleSubmit (e)  {
         
           console.log("selected data is -->", this.state.selctedPlayersList);
-        alert('A name was submitted: ' + this.state.value);
+        
         e.preventDefault();
         const newTeam = {
           mother_match_Id: this.state.selctedPlayersList[0].matchDetails['unique_id'],
@@ -205,7 +205,11 @@ collectionData(TodayFixtures, 'id').subscribe(fixtures => {
           team: this.state.selctedPlayersList[0].squad,
         }
 
-  db.collection('TodayFixtures').add(newTeam);
+ const docRef = await db.collection('TodayFixtures').add(newTeam);
+
+ alert('A fixture was submitted: ',docRef);
+
+ console.log('added ref is ', docRef,docRef.id);
 
  
       }

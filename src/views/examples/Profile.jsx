@@ -82,7 +82,7 @@ class Profile extends React.Component {
                   </Row>
                   <div className="text-center">
                     <h3>
-                      Jessica Jones
+                      Lakshmi Rai
                       <span className="font-weight-light">, 27</span>
                     </h3>
                     <div className="h5 font-weight-300">
