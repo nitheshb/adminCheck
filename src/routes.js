@@ -1,15 +1,15 @@
-import Index from "views/Index.jsx";
-import Profile from "views/examples/Profile.jsx";
-import AddPlayer from "views/addPlayer.jsx";
-import AddTeam from "views/addTeam.jsx";
-import matchSchedules from "views/showTodaySchedules.jsx";
-import myFitureMaker from "views/myFixtureMaker.jsx";
-import AddFixtures from "views/addFixtures.jsx";
-import Maps from "views/examples/Maps.jsx";
-import Register from "views/examples/Register.jsx";
-import Login from "views/examples/Login.jsx";
-import Tables from "views/examples/Tables.jsx";
-import Icons from "views/examples/Icons.jsx";
+import Index from "../views/Index.jsx";
+import Profile from "../views/examples/Profile.jsx";
+import AddPlayer from "../views/addPlayer.jsx";
+import AddTeam from "../views/addTeam.jsx";
+import matchSchedules from "../views/showTodaySchedules.jsx";
+import myFitureMaker from "../views/myFixtureMaker.jsx";
+import AddFixtures from "../views/addFixtures.jsx";
+import Maps from "../views/examples/Maps.jsx";
+import Register from "../views/examples/Register.jsx";
+import Login from "../views/examples/Login.jsx";
+import Tables from "../views/examples/Tables.jsx";
+import Icons from "../views/examples/Icons.jsx";
 
 var routes = [
   {
