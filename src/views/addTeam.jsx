@@ -502,7 +502,7 @@ collectionData(TeamDirectory, 'id').subscribe(team => {
                           >
                             <img
                               alt="..."
-                              src={require("../../assets/img/theme/react.jpg")}
+                              src={require("../assets/img/theme/react.jpg")}
                             />
                           </a>
                           <Media>
