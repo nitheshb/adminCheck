@@ -38,7 +38,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 // core components
-import UserHeader from "components/Headers/UserHeader.jsx";
+import UserHeader from "../components/Headers/UserHeader.jsx";
 
 class AddFixtures extends React.Component {
     constructor(props) {
