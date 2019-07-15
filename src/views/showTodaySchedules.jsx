@@ -303,7 +303,7 @@ class showTodaySchedule extends React.Component {
                           >
                             <img
                               alt="..."
-                              src={require("assets/img/theme/react.jpg")}
+                              src={require("../assets/img/theme/react.jpg")}
                             />
                           </a>
                           <Media>
